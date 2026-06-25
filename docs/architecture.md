@@ -36,7 +36,7 @@ graph TD
 ## 3. Database Integrations
 
 ### MongoDB (Core Data Store)
-Tagatoni reads recipes directly from Jorbites' primary MongoDB store. 
+Tagatoni reads recipes directly from Jorbites' primary MongoDB store.
 - **Query**: Searches for recipes where `calories` is missing/null **or** `recipeCuisine` is missing/null.
 - **Update**: Enriches the document using the `$set` operator to add fields.
 
@@ -70,6 +70,8 @@ Tagatoni uses the **Interactions API** (`/v1beta/interactions`) to obtain struct
     "recipeCuisine": <string>
   }
   ```
+- **Cuisine Classification Enum List**: To prevent hallucinations, spelling variations, and inconsistent casings (e.g. "mexicano", "TexMex", "mexican cuisine"), the JSON schema enforces a strict string `enum` list in `recipeCuisine`. The allowed values are:
+  - `Spanish`, `Catalan`, `Italian`, `Mexican`, `Japanese`, `Chinese`, `Indian`, `French`, `American`, `Mediterranean`, `Middle Eastern`, `Greek`, `Thai`, `Vietnamese`, `Moroccan`, `Turkish`, `Latin American`, `Caribbean`, `Nordic`, `British`, `German`, `Eastern European`, `African`, `Asian Fusion`, `International`
 - **Robust Parsing**: The Interactions API returns a stateful `steps` timeline. Tagatoni iterates over the output steps to locate the `model_output` step, extracts the generated JSON, and deserializes it directly into the application model.
 
 ---

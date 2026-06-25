@@ -63,7 +63,7 @@ impl GeminiService {
         let prompt = format!(
             "Audit this recipe and estimate:
 1. Calories (an integer representing estimated calories per serving).
-2. Recipe cuisine (string representing cuisine origin, e.g., 'Spanish', 'Italian', 'Mexican', 'Asian', 'American', 'Mediterranean', etc.).
+2. Recipe cuisine (must be selected from the allowed enum list).
 
 Recipe Details:
 Title: {}
@@ -76,15 +76,55 @@ Steps:
             recipe.title,
             recipe.description,
             recipe.categories.join(", "),
-            recipe.ingredients.iter().map(|i| format!("- {}", i)).collect::<Vec<_>>().join("\n"),
-            recipe.steps.iter().enumerate().map(|(idx, s)| format!("{}. {}", idx + 1, s)).collect::<Vec<_>>().join("\n")
+            recipe
+                .ingredients
+                .iter()
+                .map(|i| format!("- {}", i))
+                .collect::<Vec<_>>()
+                .join("\n"),
+            recipe
+                .steps
+                .iter()
+                .enumerate()
+                .map(|(idx, s)| format!("{}. {}", idx + 1, s))
+                .collect::<Vec<_>>()
+                .join("\n")
         );
 
         let response_schema = json!({
             "type": "object",
             "properties": {
                 "calories": { "type": "integer" },
-                "recipeCuisine": { "type": "string" }
+                "recipeCuisine": {
+                    "type": "string",
+                    "enum": [
+                        "Spanish",
+                        "Catalan",
+                        "Italian",
+                        "Mexican",
+                        "Japanese",
+                        "Chinese",
+                        "Indian",
+                        "French",
+                        "American",
+                        "Mediterranean",
+                        "Middle Eastern",
+                        "Greek",
+                        "Thai",
+                        "Vietnamese",
+                        "Moroccan",
+                        "Turkish",
+                        "Latin American",
+                        "Caribbean",
+                        "Nordic",
+                        "British",
+                        "German",
+                        "Eastern European",
+                        "African",
+                        "Asian Fusion",
+                        "International"
+                    ]
+                }
             },
             "propertyOrdering": ["calories", "recipeCuisine"],
             "required": ["calories", "recipeCuisine"]
