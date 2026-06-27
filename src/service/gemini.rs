@@ -13,6 +13,7 @@ struct GeminiRequest {
     model: String,
     input: String,
     generation_config: GenerationConfig,
+    response_format: ResponseFormat,
 }
 
 #[derive(Serialize)]
@@ -21,8 +22,14 @@ struct GenerationConfig {
     max_output_tokens: i64,
     top_p: f64,
     thinking_level: String,
-    response_mime_type: String,
-    response_schema: Value,
+}
+
+#[derive(Serialize)]
+struct ResponseFormat {
+    #[serde(rename = "type")]
+    format_type: String,
+    mime_type: String,
+    schema: Value,
 }
 
 #[derive(Deserialize, Debug)]
@@ -138,8 +145,11 @@ Steps:
                 max_output_tokens: 65536,
                 top_p: 0.95,
                 thinking_level: "minimal".to_string(),
-                response_mime_type: "application/json".to_string(),
-                response_schema,
+            },
+            response_format: ResponseFormat {
+                format_type: "text".to_string(),
+                mime_type: "application/json".to_string(),
+                schema: response_schema,
             },
         };
 
