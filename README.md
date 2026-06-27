@@ -6,7 +6,7 @@ Tagatoni is a robust, always-running autonomous agent in the Jorbites ecosystem 
   <img src="./docs/assets/tagatoni.png" alt="Tagatoni Logo" width="240" />
 </p>
 
-See the [Tagatoni Architecture and System Design](./docs/architecture.md) for a detailed overview of the system.
+See the [Tagatoni Architecture and System Design](./docs/architecture.md) and the [Raspberry Pi SSD Deployment Guide](./docs/raspberry_setup.md) for detailed overviews of the system.
 
 ## Features
 
@@ -75,4 +75,4 @@ Tagatoni provides build targets in the `Makefile` for the Raspberry Pi 3B (which
    make build-rpi-cross-32
    ```
 
-The compiled binaries will be located under `target/<target-triple>/release/tagatoni`. You can transfer them to your Pi using `scp`.
+The compiled binaries will be located under `target/<target-triple>/release/tagatoni`. You can transfer them to your Pi using `scp`. For step-by-step instructions on setting up mounting points, deploying files, and running it as a background service on your Raspberry Pi SSD, see the [Raspberry Pi SSD Deployment Guide](./docs/raspberry_setup.md).

@@ -1,0 +1,18 @@
+[Unit]
+Description=Tagatoni Recipe Audit Agent
+After=network-online.target mount.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/mnt/ssd/tagatoni
+EnvironmentFile=/mnt/ssd/tagatoni/.env
+ExecStart=/mnt/ssd/tagatoni/tagatoni
+Restart=on-failure
+RestartSec=15
+StandardOutput=append:/mnt/ssd/tagatoni/logs/agent.log
+StandardError=append:/mnt/ssd/tagatoni/logs/error.log
+
+[Install]
+WantedBy=multi-user.target
