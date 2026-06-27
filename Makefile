@@ -27,11 +27,11 @@ build-rpi-32:
 # Docker-based cross-compilation targets (requires 'cargo install cross')
 build-rpi-cross-64:
 	rustup target add aarch64-unknown-linux-gnu
-	cross build --release --target aarch64-unknown-linux-gnu
+	CROSS_CONTAINER_OPTS="--platform linux/amd64" cross build --release --target aarch64-unknown-linux-gnu
 
 build-rpi-cross-32:
 	rustup target add armv7-unknown-linux-gnueabihf
-	cross build --release --target armv7-unknown-linux-gnueabihf
+	CROSS_CONTAINER_OPTS="--platform linux/amd64" cross build --release --target armv7-unknown-linux-gnueabihf
 
 # systemd service targets (run these on the Raspberry Pi)
 service-install:
@@ -54,7 +54,7 @@ service-status:
 	sudo systemctl status tagatoni.service
 
 service-logs:
-	tail -f /mnt/ssd/tagatoni/logs/agent.log
+	tail -f /mnt/drive4/tagatoni/logs/agent.log
 
 service-logs-sys:
 	journalctl -u tagatoni.service -f
