@@ -97,11 +97,19 @@ impl MailerService {
             .map_err(|e| format!("Failed to construct email: {}", e))?;
 
         let creds = Credentials::new(user.clone(), password.clone());
-        let transport = AsyncSmtpTransport::<Tokio1Executor>::relay(host)
-            .map_err(|e| format!("SMTP host error: {}", e))?
-            .credentials(creds)
-            .port(port)
-            .build();
+        let transport = if port == 465 {
+            AsyncSmtpTransport::<Tokio1Executor>::relay(host)
+                .map_err(|e| format!("SMTP host error: {}", e))?
+                .credentials(creds)
+                .port(port)
+                .build()
+        } else {
+            AsyncSmtpTransport::<Tokio1Executor>::starttls_relay(host)
+                .map_err(|e| format!("SMTP host error: {}", e))?
+                .credentials(creds)
+                .port(port)
+                .build()
+        };
 
         info!("Sending recipe audit error alert email to {}...", to);
         match transport.send(email).await {
