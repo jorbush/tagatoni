@@ -9,6 +9,7 @@ This document details the system design, purpose, architectural decisions, and e
 Tagatoni is a background daemon designed to automatically audit recipes posted in the Jorbites ecosystem. Using AI, it populates missing metadata required for SEO optimization and a better consumer user experience:
 - **Calories**: An estimated count of calories per serving.
 - **Recipe Cuisine**: Classification of cuisine origin (e.g., Italian, Spanish, Mexican, Mediterranean).
+- **Recipe Yield**: Estmates the yield/servings of the recipe (e.g. "4 servings").
 
 ---
 
@@ -67,7 +68,8 @@ Tagatoni uses the **Interactions API** (`/v1beta/interactions`) to obtain struct
   ```json
   {
     "calories": <integer>,
-    "recipeCuisine": <string>
+    "recipeCuisine": <string>,
+    "recipeYield": <integer>
   }
   ```
 - **Cuisine Classification Enum List**: To prevent hallucinations, spelling variations, and inconsistent casings (e.g. "mexicano", "TexMex", "mexican cuisine"), the JSON schema enforces a strict string `enum` list in `recipeCuisine`. The allowed values are:

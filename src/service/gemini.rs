@@ -49,6 +49,8 @@ pub struct AuditResult {
     pub calories: i32,
     #[serde(rename = "recipeCuisine")]
     pub recipe_cuisine: String,
+    #[serde(rename = "recipeYield")]
+    pub recipe_yield: i32,
 }
 
 impl GeminiService {
@@ -71,6 +73,7 @@ impl GeminiService {
             "Audit this recipe and estimate:
 1. Calories (an integer representing estimated calories per serving).
 2. Recipe cuisine (must be selected from the allowed enum list).
+3. Recipe yield (an integer representing the estimated number of servings, e.g. 4).
 
 Recipe Details:
 Title: {}
@@ -131,10 +134,11 @@ Steps:
                         "Asian Fusion",
                         "International"
                     ]
-                }
+                },
+                "recipeYield": { "type": "integer" }
             },
-            "propertyOrdering": ["calories", "recipeCuisine"],
-            "required": ["calories", "recipeCuisine"]
+            "propertyOrdering": ["calories", "recipeCuisine", "recipeYield"],
+            "required": ["calories", "recipeCuisine", "recipeYield"]
         });
 
         let payload = GeminiRequest {
@@ -227,7 +231,7 @@ mod tests {
                 content: Some(json!([
                     {
                         "type": "text",
-                        "text": "{\"calories\": 350, \"recipeCuisine\": \"Italian\"}"
+                        "text": "{\"calories\": 350, \"recipeCuisine\": \"Italian\", \"recipeYield\": 4}"
                     }
                 ])),
             },
@@ -236,7 +240,10 @@ mod tests {
         let text = extract_text_from_steps(&steps);
         assert_eq!(
             text,
-            Some("{\"calories\": 350, \"recipeCuisine\": \"Italian\"}".to_string())
+            Some(
+                "{\"calories\": 350, \"recipeCuisine\": \"Italian\", \"recipeYield\": 4}"
+                    .to_string()
+            )
         );
     }
 
@@ -244,21 +251,27 @@ mod tests {
     fn test_extract_text_from_steps_string() {
         let steps = vec![Step {
             step_type: "model_output".to_string(),
-            content: Some(json!("{\"calories\": 450, \"recipeCuisine\": \"Mexican\"}")),
+            content: Some(json!(
+                "{\"calories\": 450, \"recipeCuisine\": \"Mexican\", \"recipeYield\": 6}"
+            )),
         }];
 
         let text = extract_text_from_steps(&steps);
         assert_eq!(
             text,
-            Some("{\"calories\": 450, \"recipeCuisine\": \"Mexican\"}".to_string())
+            Some(
+                "{\"calories\": 450, \"recipeCuisine\": \"Mexican\", \"recipeYield\": 6}"
+                    .to_string()
+            )
         );
     }
 
     #[test]
     fn test_audit_result_deserialization() {
-        let raw_json = "{\"calories\": 500, \"recipeCuisine\": \"Spanish\"}";
+        let raw_json = "{\"calories\": 500, \"recipeCuisine\": \"Spanish\", \"recipeYield\": 2}";
         let result: AuditResult = serde_json::from_str(raw_json).unwrap();
         assert_eq!(result.calories, 500);
         assert_eq!(result.recipe_cuisine, "Spanish");
+        assert_eq!(result.recipe_yield, 2);
     }
 }

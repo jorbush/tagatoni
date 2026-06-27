@@ -114,10 +114,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
 
-        // 3. Double check if both fields are non-null in MongoDB
-        if recipe.calories.is_some() && recipe.recipe_cuisine.is_some() {
+        // 3. Double check if all fields are non-null in MongoDB
+        if recipe.calories.is_some()
+            && recipe.recipe_cuisine.is_some()
+            && recipe.recipe_yield.is_some()
+        {
             info!(
-                "Recipe {} ({}) already has both fields populated in MongoDB. Marking as skipped.",
+                "Recipe {} ({}) already has all fields populated in MongoDB. Marking as skipped.",
                 recipe_title, recipe_id_str
             );
             if let Err(e) = turso_service.mark_skipped(&recipe_id_str).await {
@@ -173,14 +176,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         // 5. Update MongoDB
         info!(
-            "Audit successful for recipe {}: Calories = {}, Cuisine = {}. Updating MongoDB...",
-            recipe_title, audit_result.calories, audit_result.recipe_cuisine
+            "Audit successful for recipe {}: Calories = {}, Cuisine = {}, Yield = {}. Updating MongoDB...",
+            recipe_title, audit_result.calories, audit_result.recipe_cuisine, audit_result.recipe_yield
         );
         match mongo_service
             .update_recipe_seo(
                 &recipe.id,
                 audit_result.calories,
                 &audit_result.recipe_cuisine,
+                audit_result.recipe_yield,
             )
             .await
         {

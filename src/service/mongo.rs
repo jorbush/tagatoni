@@ -28,7 +28,9 @@ impl MongoService {
                 { "calories": { "$exists": false } },
                 { "calories": null },
                 { "recipeCuisine": { "$exists": false } },
-                { "recipeCuisine": null }
+                { "recipeCuisine": null },
+                { "recipeYield": { "$exists": false } },
+                { "recipeYield": null }
             ]
         };
 
@@ -40,6 +42,7 @@ impl MongoService {
         id: &ObjectId,
         calories: i32,
         recipe_cuisine: &str,
+        recipe_yield: i32,
     ) -> Result<(), mongodb::error::Error> {
         let recipe_collection = self
             .client
@@ -50,7 +53,8 @@ impl MongoService {
         let update = doc! {
             "$set": {
                 "calories": calories,
-                "recipeCuisine": recipe_cuisine
+                "recipeCuisine": recipe_cuisine,
+                "recipeYield": recipe_yield
             }
         };
 

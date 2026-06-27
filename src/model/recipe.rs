@@ -16,6 +16,8 @@ pub struct Recipe {
     pub calories: Option<i32>,
     #[serde(rename = "recipeCuisine")]
     pub recipe_cuisine: Option<String>,
+    #[serde(rename = "recipeYield")]
+    pub recipe_yield: Option<i32>,
 }
 
 #[cfg(test)]
@@ -33,7 +35,8 @@ mod tests {
             "ingredients": ["Spaghetti", "Pancetta", "Eggs", "Pecorino Romano"],
             "steps": ["Boil pasta", "Fry pancetta", "Mix egg yolk with cheese", "Combine and toss"],
             "calories": 650,
-            "recipeCuisine": "Italian"
+            "recipeCuisine": "Italian",
+            "recipeYield": 4
         });
 
         let recipe: Recipe = serde_json::from_value(recipe_json).unwrap();
@@ -44,6 +47,7 @@ mod tests {
         assert_eq!(recipe.steps[2], "Mix egg yolk with cheese");
         assert_eq!(recipe.calories, Some(650));
         assert_eq!(recipe.recipe_cuisine, Some("Italian".to_string()));
+        assert_eq!(recipe.recipe_yield, Some(4));
     }
 
     #[test]
@@ -56,11 +60,13 @@ mod tests {
             "ingredients": ["Lettuce", "Olive Oil"],
             "steps": ["Wash lettuce", "Drizzle oil"],
             "calories": null,
-            "recipeCuisine": null
+            "recipeCuisine": null,
+            "recipeYield": null
         });
 
         let recipe: Recipe = serde_json::from_value(recipe_json).unwrap();
         assert_eq!(recipe.calories, None);
         assert_eq!(recipe.recipe_cuisine, None);
+        assert_eq!(recipe.recipe_yield, None);
     }
 }
